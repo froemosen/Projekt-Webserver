@@ -3,3 +3,4 @@
 1. Lokalisér github repo i cmd-terminal
 2. Kør Scripts\activate
 3. Nu kører du på virtual env, hvis der står "(Flask)" før filstien.
+4. Kør nu python-scripts ved at skrive "python {filnavn}"

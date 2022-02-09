@@ -1,2 +1,7 @@
 # Projekt-Webserver
-Beskriv projektet
+**FOR AT KØRE PROGRAMMET SKAL VIRTUELT MILJØ OPSTARTES.**
+1. Lokalisér github repo i cmd-terminal
+2. Kør Scripts\activate
+3. Nu kører du på virtual env, hvis der står "(Flask)" før filstien.
+4. Kør nu python-scripts ved at skrive "python {filnavn}"
+5. Guide: https://flask.palletsprojects.com/en/2.0.x/installation/?highlight=virtual

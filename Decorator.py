@@ -20,24 +20,30 @@ def addrec():
             city = request.form['city']
             pin = request.form['pin']
             
-            with sql.connect("database.db") as con:
+            with sql.connect("fakedatabase.db") as con:
                 cur = con.cursor()
+                
+                
                 
                 cur.execute("INSERT INTO students (name,addr,city,pin) VALUES (?,?,?,?)",(nm,addr,city,pin))
                 
                 con.commit()
                 msg = "Record successfully added"
-        except:
+        except Exception as noUpload:
+            print(noUpload)    
+            try: con.execute("CREATE TABLE students (name TEXT, addr TEXT, city TEXT, pin TEXT);")
+            except Exception as noTableCreated: print(noTableCreated)
             con.rollback()
             msg = "error in insert operation"
         
         finally:
-            return render_template("result.html",msg = msg)
             con.close()
+            return render_template("result.html",msg = msg)
+            
 
 @app.route('/list')
 def list():
-    con = sql.connect("database.db")
+    con = sql.connect("fakedatabase.db")
     con.row_factory = sql.Row
     
     cur = con.cursor()
@@ -46,5 +52,5 @@ def list():
     rows = cur.fetchall();
     return render_template("list.html",rows = rows)
 
-if __name__ == '__main__':
+if __name__ == '__main__':    
     app.run(debug = True)

@@ -63,7 +63,7 @@ def deathsPerInfected():
     print("Getting deaths per infected...")
     deaths = GetData.deaths()
     infected = GetData.infected() 
-    y = 
+    #y = 
     return render_template("plotGraph.html", x=x, y=y)
 
 
@@ -76,7 +76,7 @@ def rawData():
     cur.execute("select * from Covid")
     
     rows = cur.fetchall();
-    return render_template("list.html",rows = rows)
+    return render_template("rawData.html",rows = rows)
 
 
 if __name__ == '__main__':    

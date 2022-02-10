@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 import sqlite3 as sql
+from getData import GetData
 
 app = Flask(__name__)
 
@@ -7,11 +8,15 @@ app = Flask(__name__)
 def home():
     return render_template('Home.html')
 
-@app.route('/enternew')
+@app.route('/test')
+def test():
+    return render_template('test.html')
+
+@app.route('/new_student')
 def new_student():
     return render_template('student.html')
 
-@app.route('/addrec',methods = ['POST', 'GET'])
+@app.route('/addrec',methods = ['POST'])
 def addrec():
     if request.method == 'POST':
         try:
@@ -51,6 +56,28 @@ def list():
     
     rows = cur.fetchall();
     return render_template("list.html",rows = rows)
+
+
+@app.route("/deathsPerInfected")
+def deathsPerInfected():
+    print("Getting deaths per infected...")
+    deaths = GetData.deaths()
+    infected = GetData.infected() 
+    y = 
+    return render_template("plotGraph.html", x=x, y=y)
+
+
+@app.route("/rawData")
+def rawData():
+    con = sql.connect("database.db")
+    con.row_factory = sql.Row
+    
+    cur = con.cursor()
+    cur.execute("select * from Covid")
+    
+    rows = cur.fetchall();
+    return render_template("list.html",rows = rows)
+
 
 if __name__ == '__main__':    
     app.run(debug = True)

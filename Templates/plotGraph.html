@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>{{ graphType }}</h1>
+
+<form method = "POST", action="/createGraph-{{ graphType }}")>
+  {% for country in countries %}
+  <input type="checkbox" id="country" name="country" value= {{ country }}>
+  <label for={{ country }}> {{ country }}</label><br>
+  {% endfor %}
+
+  <input type="submit" value="Submit">
+</form>
+
+<img src="/static/graph.png" alt="Plotted data">
+
+</body>
+</html>

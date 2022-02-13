@@ -1,14 +1,16 @@
 import pandas as pd
 import sqlite3 as sql
 
-
+#Laver dataframe
 df = pd.read_csv("SmittedeDødeData.csv")
 
+#sortere datoer, smittetal, døde og lande fra og putter det ind i lister
 dates = df["dateRep"]
 cases = df["cases"]
 deaths = df["deaths"]
 country = df["countriesAndTerritories"]
 
+#Indsætter dataene ind i databasen
 for i in range(22173):
     d = dates[i]
     c = cases[i]

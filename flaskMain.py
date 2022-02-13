@@ -2,11 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for
 import sqlite3 as sql
 from getData import GetData
 import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib.dates as mdates
-import datetime
 
-#Example plot
+
+#Example plot, Starter med blank plot når hjemmesiden startes.
 plt.plot([0], [0])
 plt.xlabel('Dates')
 plt.ylabel('YOUR CHOSEN DATA')
@@ -14,37 +12,38 @@ plt.savefig('static/graph.png')
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/') #Viser home-page
 def home():
     return render_template('Home.html')
 
-@app.route('/test')
+@app.route('/test') #Viser testside (ligegyldig)
 def test():
     return render_template('test.html')
 
-@app.route('/new_student')
+@app.route('/new_student') #Til at indtaste data i fakedatabase.db
 def new_student():
     return render_template('student.html')
 
-@app.route('/addrec',methods = ['POST']) #Bruges til at opdatere vores "falske" database.
+@app.route('/addrec',methods = ['POST']) #Bruges til at opdatere vores fakedatabase.db
 def addrec():
     if request.method == 'POST':
         try:
+            #Hent indtastet data
             nm = request.form['nm']
             addr = request.form['add']
             city = request.form['city']
             pin = request.form['pin']
             
-            with sql.connect("fakedatabase.db") as con:
+            with sql.connect("fakedatabase.db") as con: #Gem indtastet data
                 cur = con.cursor()                
                 cur.execute("INSERT INTO students (name,addr,city,pin) VALUES (?,?,?,?)",(nm,addr,city,pin))
                 
                 con.commit()
                 msg = "Record successfully added"
-        except Exception as noUpload:
+        except Exception as noUpload: #Hvis tabel ikke eksisterer
             print(noUpload)    
             try: con.execute("CREATE TABLE students (name TEXT, addr TEXT, city TEXT, pin TEXT);")
-            except Exception as noTableCreated: print(noTableCreated)
+            except Exception as noTableCreated: print(noTableCreated) #Tabel kunne ikke laves.
             con.rollback()
             msg = "error in insert operation"
         
@@ -53,7 +52,7 @@ def addrec():
             return render_template("result.html",msg = msg)
             
 
-@app.route('/list')
+@app.route('/list') #Viser data fra "falsk" database
 def list():
     con = sql.connect("fakedatabase.db")
     con.row_factory = sql.Row
@@ -65,21 +64,19 @@ def list():
     return render_template("list.html",rows = rows)
 
 
-@app.route("/deathsPerInfected", methods = ['POST', 'GET'])
+@app.route("/deathsPerInfected") #Siger til plotGraph at det er denne type graf vi skal have.
 def deathsPerInfected():
     print("Getting deaths per infected...")
-    countries = GetData().countries()
-    
-
+    countries = GetData().countries() #Liste med alle registrerede lande.
     return render_template("plotGraph.html", graphType = "deathsPerInfected", countries = countries)
 
-@app.route("/createGraph-deathsPerInfected", methods = ['POST', 'GET'])
+@app.route("/createGraph-deathsPerInfected", methods = ['POST'])
 def plotGraph():
     if request.method=="POST":
-        countries = request.form.getlist("country")
+        countries = request.form.getlist("country") #Skaffer de "tjekkede" lande på siden som liste.
         print(countries)
         row = 0
-        fig, axs = plt.subplots(len(countries))
+        fig, axs = plt.subplots(len(countries)) #Et subplot per land
         for country in countries:
             dates = GetData().dates(country)
             deaths = GetData().deaths(country)
@@ -100,11 +97,11 @@ def plotGraph():
                     deaths[item] = 0.000001 
             
             values = []
-            for i in range(len(deaths)):
+            for i in range(len(deaths)): #Dividerer alle dødstal med alle smittetal
                 values.append(deaths[i]/infected[i])
             print(values)
             
-            for i in range(len(values)):
+            for i in range(len(values)): #Forbehold til mærkelig data
                 if values[i] > 0.1:
                     values[i] = 0.1
                 if values[i] < 0:
@@ -116,15 +113,15 @@ def plotGraph():
         
             row += 1
         
-        fig.tight_layout()
-        plt.savefig('static/graph.png')
+        fig.tight_layout() #Layout af grafer
+        plt.savefig('static/graph.png') #Gemmer graf som png
         
-        return redirect(url_for('deathsPerInfected'))
+        return redirect(url_for('deathsPerInfected')) #Tilbage til side med deathsPerInfected med nyt png-plot
         
                 
 
 
-@app.route("/rawData")
+@app.route("/rawData") #Viser rå covid-data fra database.db
 def rawData():
     con = sql.connect("database.db")
     con.row_factory = sql.Row

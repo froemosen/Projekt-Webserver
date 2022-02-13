@@ -1,5 +1,0 @@
-set FLASK_APP=FILNAVN (Decorator.py)
-
-flask run
-
-

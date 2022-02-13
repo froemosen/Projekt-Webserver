@@ -3,6 +3,7 @@
 <body>
 
 <h1>{{ graphType }}</h1>
+<h3>Loading takes a while, so please be patient.</h3>
 
 <form method = "POST", action="/createGraph-{{ graphType }}")>
   {% for country in countries %}
